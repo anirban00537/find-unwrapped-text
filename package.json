@@ -1,7 +1,7 @@
 {
   "name": "find-unwrapped-text",
-  "version": "1.0.2",
-  "description": "A script to find unwrapped text in JSX, TSX, JS, and TS files.",
+  "version": "1.0.4",
+  "description": "A script to find unwrapped text in JSX and TSX files.",
   "main": "index.js",
   "bin": {
     "find-unwrapped-text": "./cli.js"

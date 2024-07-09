@@ -13,15 +13,14 @@ const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/;
 const findUnwrappedText = (dir) => {
   const results = [];
 
-  // Use glob to find all JSX, TSX, JS, and TS files in the directory
-  const files = glob.sync(`${dir}/**/*.{jsx,tsx,js,ts}`, { absolute: true });
+  // Use glob to find all JSX and TSX files in the directory
+  const files = glob.sync(`${dir}/**/*.{jsx,tsx}`, { absolute: true });
 
   files.forEach((file) => {
     const content = fs.readFileSync(file, "utf-8");
 
     let ast;
     try {
-      // Parse the file content to an AST
       ast = parser.parse(content, {
         sourceType: "module",
         plugins: ["jsx", "typescript", "classProperties", "decorators-legacy"],
@@ -32,7 +31,6 @@ const findUnwrappedText = (dir) => {
       return;
     }
 
-    // Traverse the AST to find text nodes within JSX elements and other quoted texts
     traverse(ast, {
       ImportDeclaration(path) {
         // Ignore import declarations
@@ -54,7 +52,6 @@ const findUnwrappedText = (dir) => {
           return;
         }
 
-        // If the attribute value is a string literal, check if it's wrapped in t() and not a URL
         if (t.isStringLiteral(path.node.value)) {
           const textValue = path.node.value.value.trim();
           if (
@@ -66,7 +63,6 @@ const findUnwrappedText = (dir) => {
           }
         }
 
-        // If the attribute value is a JSX expression, handle it appropriately
         if (t.isJSXExpressionContainer(path.node.value)) {
           const expression = generate(path.node.value.expression).code;
           if (
@@ -89,7 +85,6 @@ const findUnwrappedText = (dir) => {
         }
       },
       StringLiteral(path) {
-        // Skip strings inside className attributes
         const parent = path.findParent(
           (p) =>
             t.isJSXAttribute(p.node) &&
@@ -107,7 +102,6 @@ const findUnwrappedText = (dir) => {
         }
       },
       TemplateLiteral(path) {
-        // Skip template literals inside className attributes
         const parent = path.findParent(
           (p) =>
             t.isJSXAttribute(p.node) &&
@@ -132,13 +126,12 @@ const findUnwrappedText = (dir) => {
   return results;
 };
 
-// Function to write results to a text file
 const writeResultsToFile = (results, outputFile) => {
   const outputStream = fs.createWriteStream(outputFile);
 
   results.forEach((result) => {
     outputStream.write(`File: ${result.file}\n`);
-    outputStream.write(`Unwrapped Text: ${result.text}\n\n`);
+    outputStream.write(`Unwrapped Text=============> ${result.text}\n\n`);
   });
 
   outputStream.end();
@@ -151,5 +144,4 @@ const main = (directoryToSearch, outputFile) => {
   console.log(`Search complete. Results written to ${outputFile}`);
 };
 
-// Export the main function as the default export
 module.exports = main;
