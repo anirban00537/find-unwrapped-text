@@ -1,0 +1,21 @@
+{
+  "name": "find-unwrapped-text",
+  "version": "1.0.2",
+  "description": "A script to find unwrapped text in JSX, TSX, JS, and TS files.",
+  "main": "index.js",
+  "bin": {
+    "find-unwrapped-text": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/generator": "7.19.0",
+    "@babel/parser": "7.19.0",
+    "@babel/traverse": "7.19.0",
+    "@babel/types": "7.19.0",
+    "glob": "7.2.0"
+  }
+}
